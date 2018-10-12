@@ -1,2 +1,2 @@
 # myvidproject
-Project for looking my vids made with flask
+Project for tracking updates made with flask (reused lots of things from other project)
