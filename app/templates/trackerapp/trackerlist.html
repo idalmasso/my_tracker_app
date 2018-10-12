@@ -1,0 +1,64 @@
+{% extends "basetemplate.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block appcontent %}
+<h1>Trackers list</h1>
+<table class="table table-hover">
+       <tr>
+        <th>
+            Title
+        </th>
+        <th>
+            Tracker status
+        </th>
+        <th>
+            Requires
+        </th>
+        {% if current_user.admin %}
+        <th>
+            Delete
+        </th>
+        {% endif %}
+    </tr>
+    {% for tracker in trackers %}
+
+    <tr>
+        <td>
+            <div class="tracker_title">
+                <a href="{{ url_for('trackerapp.tracker_info',id=tracker.id) }}">{{ tracker.title }}</a>
+                <span hidden="True">{{ tracker.id }}</span>
+            </div>
+        </td>
+        <td class="tracker_status">
+        </td>
+        <td class="tracker_requires">
+        </td>
+        {% if current_user.admin %}
+        <td>
+           <form action="{{ url_for('trackerapp.delete_tracker', id=tracker.id) }}" method=post class=del-component>
+                <button class="btn btn-danger">
+                    Delete
+                </button>
+            </form>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+<nav aria-label="...">
+    <ul class="pager">
+        <li class="previous {% if not prev_url %} disabled {% endif %}">
+            <a href="{{ prev_url or '#' }}">
+                <span aria-hidden="true">&larr;</span>Newer
+            </a>
+        </li>
+        <li class="next {% if not next_url %} disabled{% endif %}">
+            <a href="{{ next_url or '#' }}">
+                <span aria-hidden="true">&rarr;</span>Older
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

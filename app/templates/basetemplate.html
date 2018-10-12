@@ -1,0 +1,101 @@
+{% extends "bootstrap/base.html" %}
+    {% block title %}
+        {% if title %}{{title}} -{% endif %} My trackers
+    {% endblock %}
+    {% block navbar %}
+        <style>
+            .navbar {background-color: yellow;}
+            body {background-color: lightgray;}
+        </style>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid container">
+                <div class="navbar-header">
+                     <a class="navbar-brand" href="#">MyTrackers!</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('trackerapp.index') }}">Home</a></li>
+                        {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('trackerapp.trackerlist') }}">Trackers</a></li>
+                        <li><a href="{{ url_for('trackerapp.add_tracker') }}">Add</a></li>
+                    {% endif %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{ url_for('authentication.registration') }}">{{ 'Register' }}</a></li>
+                        <li><a href="{{ url_for('authentication.login') }}">{{ 'Login' }}</a></li>
+                    {% else %}
+                        {% if current_user.admin %}
+                            <li><a href="{{ url_for('authentication.admin') }}">{{ 'Admin' }}</a></li>
+                        {% endif %}
+                    <li><a href="{{ url_for('authentication.logout') }}">{{ 'Logout' }}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    {% endblock %}
+    {% block content %}
+        <div class="container" >
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible fade in" role="alert">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block appcontent %}{% endblock %}
+        </div>
+
+    {% endblock %}
+    {% block scripts %}
+        {{ super() }}
+        <script>
+            $(function(){
+                var timer=null;
+                $(".tracker_title").hover(
+                    function(event){
+                        var elem = $(event.currentTarget);
+                        timer=setTimeout(function(){
+                            timer = null;
+                            xhr = $.ajax(
+                                '/tracker/' + elem.find("span").first().text().trim() + '/popup').done(
+                                    function(data) {
+                                            xhr = null
+                                            p=elem.popover({
+                                            trigger: 'manual',
+                                            html: true,
+                                            animation: false,
+                                            container: elem,
+                                            content: data,
+                                            title: elem.find("a").first().text().trim()
+                                        });
+                                        p.on("show.bs.popover", function(e){
+                                            p.data("bs.popover").tip().css({"max-width": "800px"});
+                                        });
+                                        p.popover('show')
+
+
+                                    }
+                                );
+                         }, 1000);
+                    },
+                    function(event){
+                        var elem = $(event.currentTarget);
+                        if(timer)
+                        {
+                            clearTimeout(timer);
+                            timer=null;
+                        }
+                         else if (xhr) {
+                            xhr.abort();
+                            xhr = null;
+                        }
+                        else
+                            elem.popover("destroy");
+                    }
+
+                )
+            });
+        </script>
+    {% endblock %}
