@@ -10,16 +10,17 @@ from pathlib import Path
 
 class Tracker(object):
     title = ''
-    image_path = ''
-    file_path = ''
+    file_paths = ''
 
     def __init__(self, tracker=None):
         if tracker is not None:
+            self.number = tracker.get('number', '')
             self.title = tracker.get('title', '')
             self.description = tracker.get('description', None)
-            self.file_path = tracker.get('file_path', None)
+            self.file_paths = tracker.get('file_paths', None)
             self.id = str(tracker.get('_id', ''))
             self.status = tracker.get('status', None)
+            self.priority = tracker.get('priority', None)
             self.requires_id = int(tracker.get('requires_id', '-1'))
 
     def remove_tracker(self):
@@ -29,11 +30,12 @@ class Tracker(object):
     def add_tracker(title):
         trk = mongo.db.trackers.find_one({'title': title})
         if trk is not None:
-            return trk
-        trk_id = mongo.db.trackers.insert({'title': title,})
+            return Tracker(trk)
+        max_val=mongo.db.trackers.find_one({},{'number':1}, sort=[('number',-1)]).get('number',1)
+        trk_id = mongo.db.trackers.insert({'title': title, 'number':max_val+1 ,'description':'', 'file_paths':[]})
         tracker = Tracker.get_tracker(str(trk_id))
         return tracker
-	
+
     @staticmethod
     def get_list_trackers(page_number, tracker_per_page):
         class Object(object):
