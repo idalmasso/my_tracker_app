@@ -14,24 +14,36 @@ class Tracker(object):
 
     def __init__(self, tracker=None):
         if tracker is not None:
-            self.number = tracker.get('number', '')
+            self.number = tracker.get('number', 0)
             self.title = tracker.get('title', '')
-            self.description = tracker.get('description', None)
+            self.description = tracker.get('description', '')
             self.file_paths = tracker.get('file_paths', None)
             self.id = str(tracker.get('_id', ''))
-            self.status = tracker.get('status', None)
-            self.priority = tracker.get('priority', None)
+            self.status = tracker.get('status', 0)
+            self.priority = tracker.get('priority', 0)
             self.requires_id = int(tracker.get('requires_id', '-1'))
 
     def remove_tracker(self):
         mongo.db.trackers.delete_one({'_id': ObjectId(self.id)})
 
+    def update_tracker_by_form(self):
+        mongo.db.trackers.update_one({'_id': ObjectId(self.id)},{
+                                    '$set':{
+                                        'title':self.title,
+                                        'description':self.description,
+                                        'status':self.status,
+                                        'priority':self.priority,
+                                        }})
     @staticmethod
     def add_tracker(title):
         trk = mongo.db.trackers.find_one({'title': title})
         if trk is not None:
             return Tracker(trk)
-        max_val=mongo.db.trackers.find_one({},{'number':1}, sort=[('number',-1)]).get('number',1)
+        max_val_trk=mongo.db.trackers.find_one({},{'number':1}, sort=[('number',-1)])
+        if max_val_trk is None:
+            max_val =0
+        else:
+            max_val = max_val_trk.get('number',1)
         trk_id = mongo.db.trackers.insert({'title': title, 'number':max_val+1 ,'description':'', 'file_paths':[]})
         tracker = Tracker.get_tracker(str(trk_id))
         return tracker

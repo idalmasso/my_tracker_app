@@ -3,26 +3,28 @@
 {% block appcontent %}
 
 <div class="container">
-    <h1>Tracker {{ tracker.number }}</h1>
+    <h1>Tracker {{ '%04d' % tracker.number }}</h1>
     <div class="row">
         <div class="col-lg-12 order-md-1">
             <ul class="list-group mb-1">
                 <li class="list-group-item d-flex justify-content-between lh-condensed">
-				 <h6 class="my-0"><b>Title</b></h6>
-                    <small class="text-muted">{{ tracker.title }}</small>
-                    <h6 class="my-0"><b>Description</b></h6>
-                    <small class="text-muted">{{ tracker.description }}</small>
+					 <h6 class="my-0"><b>Title</b></h6>
+					<small class="text-muted">{{ tracker.title }}</small>
+					<h6 class="my-0"><b>Description</b></h6>
+					<small class="text-muted">{{ tracker.description }}</small>
+					<h6 class="my-0"><b>Status</b></h6>
+					<small class="text-muted">{{ statuses.get(tracker.status|string) }}</small>
+					<h6 class="my-0"><b>Priority</b></h6>
+					<small class="text-muted">{{ priorities.get(tracker.priority|string) }}</small>
                 </li>
                 <br>
                 <li class="list-group-item d-flex justify-content-between lh-condensed">
-
-                    <form action="{{ url_for('trackerapp.tracker_info', id=tracker.id) }}" method=post class=del-component>
-                        <button class="btn btn-success">
-                        Edit
-                        </button>
+                    <form action="" method="POST" class=del-component>
+                        <button class="btn btn-warning" name="action" value="edit">Edit</button>
+                        <button class="btn btn-success" name="action" value="back">Back</button>
                     </form>
                     <br>
-                </li>
+				</li>
             </ul>
         </div>
     </div>

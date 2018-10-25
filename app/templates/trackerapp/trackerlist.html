@@ -4,11 +4,17 @@
 <h1>Trackers list</h1>
 <table class="table table-hover">
        <tr>
+		<th>
+			Tracker
+		</th>
         <th>
             Title
         </th>
         <th>
             Tracker status
+        </th>
+		<th>
+            Tracker priority
         </th>
         <th>
             Requires
@@ -22,13 +28,23 @@
     {% for tracker in trackers %}
 
     <tr>
+		<td>
+        <div class="tracker_id">
+                <a href="{{ url_for('trackerapp.tracker_info',id=tracker.id) }}">{{ '%04d' % tracker.number }}</a>
+                <span hidden="True">{{ tracker.id }}</span>
+            </div>
+        </td>
         <td>
             <div class="tracker_title">
                 <a href="{{ url_for('trackerapp.tracker_info',id=tracker.id) }}">{{ tracker.title }}</a>
                 <span hidden="True">{{ tracker.id }}</span>
             </div>
         </td>
-        <td class="tracker_status">
+		<td class="tracker_status">
+			{{ statuses.get(tracker.status|string) }}
+        </td>
+        <td class="tracker_priority">
+			{{ priorities.get(tracker.priority|string) }}
         </td>
         <td class="tracker_requires">
         </td>

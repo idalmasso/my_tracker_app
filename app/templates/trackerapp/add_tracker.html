@@ -9,6 +9,9 @@
             {{ wtf.form_errors(form, hiddens="only") }}
             {{ wtf.form_field(form.title, class='form-control', placeholder='Title')}}
             <br>
+			{{ wtf.form_field(form.description, class='form-control', placeholder='Description')}}
+			{{ wtf.form_field(form.priority, class='form-control', placeholder='Priority')}}
+			 <br>
             {{ wtf.form_field(form.submit, class='btn btn-success') }}
         </form>
     </div>
