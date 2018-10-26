@@ -3,6 +3,7 @@ from flask import url_for, request, render_template, send_from_directory, curren
 from flask_login import login_required, current_user
 from app.trackerapp.forms import AddTrackerForm, EditTrackerForm
 from app.tracker import Tracker
+from app.projectmodel import TrkProject
 import os
 from .lookup import *
 
@@ -90,6 +91,13 @@ def add_tracker():
         tracker=Tracker.add_tracker(form.title.data)
         tracker.description = form.description.data
         tracker.priority = int(form.priority.data)
+        if 'project' in session:
+            project=session['project']
+            tracker.project=project
+        else:
+            flash('No project selected!')
+            return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
+
         tracker.update_tracker_by_form()
         return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
     return render_template('trackerapp/add_tracker.html', form=form, title='Add tracker')
@@ -101,4 +109,6 @@ def delete_tracker(id):
     if current_user.admin:
         Tracker.get_tracker(id).remove_tracker()
     return redirect(url_for('trackerapp.trackerlist'))
+
+
 

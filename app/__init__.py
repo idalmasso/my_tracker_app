@@ -51,6 +51,7 @@ def create_app(config_class=Config):
         app.logger.info('log startup')
     return app
 
+
 from app import usermodel, tracker,projectmodel
 
 

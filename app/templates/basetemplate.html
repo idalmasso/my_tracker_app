@@ -24,6 +24,9 @@
                         <li><a href="{{ url_for('authentication.registration') }}">{{ 'Register' }}</a></li>
                         <li><a href="{{ url_for('authentication.login') }}">{{ 'Login' }}</a></li>
                     {% else %}
+						<li class="align-middle">
+  <select id="projects" class="form-control align-middle">
+  </select></li>
                         {% if current_user.admin %}
                             <li><a href="{{ url_for('authentication.admin') }}">{{ 'Admin' }}</a></li>
                         {% endif %}
@@ -96,6 +99,11 @@
                     }
 
                 )
+				
+				$("select#projects").append( $("<option>")
+					.val("value")
+					.html("text to be displayed")
+				);
             });
         </script>
     {% endblock %}

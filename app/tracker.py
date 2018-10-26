@@ -21,6 +21,7 @@ class Tracker(object):
             self.status = tracker.get('status', 0)
             self.priority = tracker.get('priority', 0)
             self.requires_id = int(tracker.get('requires_id', '-1'))
+            self.project = tracker.get('project',None)
 
     def remove_tracker(self):
         mongo.db.trackers.delete_one({'_id': ObjectId(self.id)})
@@ -32,6 +33,7 @@ class Tracker(object):
                                         'description':self.description,
                                         'status':self.status,
                                         'priority':self.priority,
+                                        'project':self.project
                                         }})
     @staticmethod
     def add_tracker(title):
@@ -48,7 +50,7 @@ class Tracker(object):
         return tracker
 
     @staticmethod
-    def get_list_trackers(page_number, tracker_per_page):
+    def get_list_trackers(page_number, tracker_per_page, project=None):
         class Object(object):
             pass
 
@@ -56,10 +58,13 @@ class Tracker(object):
         list_tracker.has_prev = (page_number > 1)
         list_tracker.prev = page_number - 1
         list_tracker.next = page_number + 1
-        cont = mongo.db.trackers.count()
+        fltr={}
+        if not project is None:
+            fltr={'project':str(project)}
+        cont = mongo.db.trackers.count(fltr)
         list_tracker.has_next = (cont > tracker_per_page * page_number)
         skips = tracker_per_page * (page_number - 1)
-        cursor = mongo.db.trackers.find().skip(skips).limit(tracker_per_page)
+        cursor = mongo.db.trackers.find(fltr).skip(skips).limit(tracker_per_page)
         list_tracker.trackers = [Tracker(tracker) for tracker in cursor]
         return list_tracker
 

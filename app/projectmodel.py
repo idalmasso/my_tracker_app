@@ -48,3 +48,10 @@ class TrkProject(object):
         if not project:
             return None
         return TrkProject(project)
+
+    @staticmethod
+    def find_first():
+        project = mongo.db.projects.find_one()
+        if not project:
+            return None
+        return TrkProject(project)
