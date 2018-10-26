@@ -33,6 +33,8 @@ def create_app(config_class=Config):
     app.register_blueprint(authentication_bp, url_prefix='/auth')
     from app.trackerapp import bp as trackerapp_bp
     app.register_blueprint(trackerapp_bp)
+    from app.projects import bp as project_bp
+    app.register_blueprint(project_bp)
     if not app.debug:
         # ...
 
@@ -49,7 +51,7 @@ def create_app(config_class=Config):
         app.logger.info('log startup')
     return app
 
-from app import usermodel, tracker
+from app import usermodel, tracker,projectmodel
 
 
 

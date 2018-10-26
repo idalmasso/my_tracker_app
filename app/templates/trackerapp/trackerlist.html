@@ -2,6 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block appcontent %}
 <h1>Trackers list</h1>
+<a href="{{ url_for('trackerapp.add_tracker') }}" class="btn btn-info" role="button">Add new Tracker</a>
 <table class="table table-hover">
        <tr>
 		<th>

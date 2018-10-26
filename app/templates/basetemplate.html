@@ -15,8 +15,8 @@
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('trackerapp.index') }}">Home</a></li>
                         {% if current_user.is_authenticated %}
+					<li><a href="{{ url_for('projects.projectlist') }}">Projects</a></li>
                     <li><a href="{{ url_for('trackerapp.trackerlist') }}">Trackers</a></li>
-                        <li><a href="{{ url_for('trackerapp.add_tracker') }}">Add</a></li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

@@ -2,7 +2,6 @@ from app import mongo
 from flask import current_app
 from bson.objectid import ObjectId
 import os
-from bs4 import BeautifulSoup
 import urllib.request
 import json
 from pathlib import Path
