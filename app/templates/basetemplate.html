@@ -24,8 +24,8 @@
                         <li><a href="{{ url_for('authentication.registration') }}">{{ 'Register' }}</a></li>
                         <li><a href="{{ url_for('authentication.login') }}">{{ 'Login' }}</a></li>
                     {% else %}
-						<li class="align-middle">
-						  <select id="projects" class="form-control align-middle">
+						<li class>
+						  <select id="projects" class="form-control align-middle" style="margin-top:8px;">
 						  {% for prj in project_choices %}
 							<option value= "{{ prj[0] }}"{% if sessionproject==prj[0] %} selected{% endif %}>{{ prj[1] }} </option>
 						  {% endfor %}
