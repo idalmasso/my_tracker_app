@@ -50,7 +50,7 @@ class Tracker(object):
         return tracker
 
     @staticmethod
-    def get_list_trackers(page_number, tracker_per_page, project=None):
+    def get_list_trackers(page_number, tracker_per_page, filtering={},ordering={}):
         class Object(object):
             pass
 
@@ -58,13 +58,10 @@ class Tracker(object):
         list_tracker.has_prev = (page_number > 1)
         list_tracker.prev = page_number - 1
         list_tracker.next = page_number + 1
-        fltr={}
-        if not project is None:
-            fltr={'project':str(project)}
-        cont = mongo.db.trackers.count(fltr)
+        cont = mongo.db.trackers.count(filtering)
         list_tracker.has_next = (cont > tracker_per_page * page_number)
         skips = tracker_per_page * (page_number - 1)
-        cursor = mongo.db.trackers.find(fltr).skip(skips).limit(tracker_per_page)
+        cursor = mongo.db.trackers.find(filtering).skip(skips).limit(tracker_per_page)
         list_tracker.trackers = [Tracker(tracker) for tracker in cursor]
         return list_tracker
 

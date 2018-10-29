@@ -8,6 +8,7 @@ class AddTrackerForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     priority = SelectField('Priority', choices = Lookup(PRIORITIES))
+    project = SelectField('Project', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
@@ -16,4 +17,5 @@ class EditTrackerForm(FlaskForm):
     description = TextAreaField('Description', validators=[DataRequired()])
     status = SelectField('Status', choices =Lookup(STATUSES))
     priority = SelectField('Priority', choices =Lookup(PRIORITIES))
+    project = SelectField('Project', validators=[DataRequired()])
     submit = SubmitField('Submit')

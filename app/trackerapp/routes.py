@@ -71,11 +71,16 @@ def tracker_edit(id):
         flash('tracker with id {} does not exist'.format(id))
         return redirect(url_for('trackerapp.trackerlist'))
     form = EditTrackerForm(obj=tracker)
+    form.project.choices = [(p.id,p.name) for p in TrkProject.get_all()]
+    if form.project.choices == []:
+        flash('No Projects exist!')
+        return redirect(url_for('projects.projectlist'))
     if form.validate_on_submit():
         tracker.title = form.title.data
         tracker.description = form.description.data
         tracker.priority = int(form.priority.data)
         tracker.status = int(form.status.data)
+        tracker.project = form.project.data
         tracker.update_tracker_by_form()
         flash('Tracker  {} updated'.format(tracker.number))
         return redirect(url_for('trackerapp.trackerlist'))
@@ -87,17 +92,15 @@ def tracker_edit(id):
 @login_required
 def add_tracker():
     form = AddTrackerForm()
+    form.project.choices = [(p.id,p.name) for p in TrkProject.get_all()]
+    if form.project.choices == []:
+        flash('No Projects exist!')
+        return redirect(url_for('projects.projectlist'))
     if form.validate_on_submit():
         tracker=Tracker.add_tracker(form.title.data)
         tracker.description = form.description.data
         tracker.priority = int(form.priority.data)
-        if 'project' in session:
-            project=session['project']
-            tracker.project=project
-        else:
-            flash('No project selected!')
-            return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
-
+        tracker.project = form.project.data
         tracker.update_tracker_by_form()
         return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
     return render_template('trackerapp/add_tracker.html', form=form, title='Add tracker')

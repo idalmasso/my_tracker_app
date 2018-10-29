@@ -24,7 +24,8 @@ class TrkProject(object):
             return TrkProject(prj)
         prj_id = mongo.db.projects.insert({'name': name,
                                            'description':description})
-        return prj_id
+        project = TrkProject.get_project(str(prj_id))
+        return project
 
     @staticmethod
     def get_list_projects(page_number, projects_per_page):
@@ -55,3 +56,9 @@ class TrkProject(object):
         if not project:
             return None
         return TrkProject(project)
+    
+    @staticmethod
+    def get_all():
+        projects = mongo.db.projects.find()
+        return [TrkProject(project) for project in projects]
+
