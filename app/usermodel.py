@@ -49,11 +49,11 @@ class User(UserMixin):
     def __repr__(self):
         return '<User> {}'.format(self.username)
 
-    def set_admin():
+    def set_admin(self):
             self.admin=True
             mongo.db.users.update_one({'username': self.username}, {"$set": {'admin': True}})
             
-    def unset_admin():
+    def unset_admin(self):
             self.admin=False
             mongo.db.users.update_one({'username': self.username}, {"$set": {'admin': False}})
 		

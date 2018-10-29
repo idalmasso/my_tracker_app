@@ -9,13 +9,13 @@ from werkzeug.urls import url_parse
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('trackerapp.trackerlist'))
+        return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.find_user(form.username.data)
         if user is None or not user.check_password(form.password.data) or not user.enabled:
             flash('Incorrect user or password')
-            return redirect(url_for('trackerapp.trackerlist'))
+            return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
         login_user(user, form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':

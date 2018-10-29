@@ -20,12 +20,10 @@ def trackerlist(filter_tracker):
     if 'sessionproject' in session:
         if session['sessionproject']!='ALL':            
             filt = {'project':session['sessionproject']}
-    print(filt)
     if filter_tracker=='open':
         filt.update({'status':{'$in':[0,1]}})
     if filter_tracker=='closed':
         filt.update({'status':{'$nin':[0,1]}})
-    print(filt)
     page = request.args.get('page', 1, type=int)
     trackers = Tracker.get_list_trackers(page, int(current_app.config['TRACKER_PER_PAGE']),filtering=filt)
     prev_url = url_for('trackerapp.trackerlist',filter_tracker=filter_tracker, page=trackers.prev) if trackers.has_prev else None

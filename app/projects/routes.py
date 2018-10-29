@@ -10,6 +10,8 @@ import os
 @bp.route('/projectlist')
 @login_required
 def projectlist():
+    if not current_user.admin:
+        return redirect(url_for('trackerapp.index'))
     page = request.args.get('page', 1, type=int)
     projects = TrkProject.get_list_projects(page, int(current_app.config['PROJECTS_PER_PAGE']))
     prev_url = url_for('projects.projectlist', page=projects.prev) if projects.has_prev else None
