@@ -12,7 +12,6 @@ def add_session_project_processor():
     project_choices=[('ALL','')]
     project_choices+=( [(p.id,p.name) for p in TrkProject.get_all()])
     val=''
-    print(project_choices)
     if 'sessionproject' in session:
         val=session['sessionproject']
     return {'project_choices':project_choices, 'sessionproject':val}
