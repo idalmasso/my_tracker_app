@@ -1,5 +1,5 @@
 from app.trackerapp import bp
-from flask import url_for, request, render_template, send_from_directory, current_app, flash,redirect, jsonify
+from flask import url_for, request, render_template, send_from_directory, current_app, flash,redirect, jsonify, session
 from flask_login import login_required, current_user
 from app.trackerapp.forms import AddTrackerForm, EditTrackerForm
 from app.tracker import Tracker
@@ -16,8 +16,12 @@ def index():
 @bp.route('/trackerlist')
 @login_required
 def trackerlist():
+    filt = {}
+    if 'sessionproject' in session:
+        if session['sessionproject']!='ALL':            
+            filt = {'project':session['sessionproject']}
     page = request.args.get('page', 1, type=int)
-    trackers = Tracker.get_list_trackers(page, int(current_app.config['TRACKER_PER_PAGE']))
+    trackers = Tracker.get_list_trackers(page, int(current_app.config['TRACKER_PER_PAGE']),filtering=filt)
     prev_url = url_for('trackerapp.trackerlist', page=trackers.prev) if trackers.has_prev else None
     next_url = url_for('trackerapp.trackerlist', page=trackers.next) if trackers.has_next else None
     return render_template('trackerapp/trackerlist.html', title='trackers',
@@ -93,6 +97,8 @@ def tracker_edit(id):
 def add_tracker():
     form = AddTrackerForm()
     form.project.choices = [(p.id,p.name) for p in TrkProject.get_all()]
+    if 'sessionproject' in session and session['sessionproject']!='ALL':
+        form.project.data=session['sessionproject']
     if form.project.choices == []:
         flash('No Projects exist!')
         return redirect(url_for('projects.projectlist'))
@@ -112,6 +118,3 @@ def delete_tracker(id):
     if current_user.admin:
         Tracker.get_tracker(id).remove_tracker()
     return redirect(url_for('trackerapp.trackerlist'))
-
-
-

@@ -25,8 +25,11 @@
                         <li><a href="{{ url_for('authentication.login') }}">{{ 'Login' }}</a></li>
                     {% else %}
 						<li class="align-middle">
-  <select id="projects" class="form-control align-middle">
-  </select></li>
+						  <select id="projects" class="form-control align-middle">
+						  {% for prj in project_choices %}
+							<option value= "{{ prj[0] }}"{% if sessionproject==prj[0] %} selected{% endif %}>{{ prj[1] }} </option>
+						  {% endfor %}
+						  </select></li>
                         {% if current_user.admin %}
                             <li><a href="{{ url_for('authentication.admin') }}">{{ 'Admin' }}</a></li>
                         {% endif %}
@@ -100,9 +103,22 @@
 
                 )
 				
-				$("select#projects").append( $("<option>")
-					.val("value")
-					.html("text to be displayed")
+				$("select#projects").change( 
+					function(event){
+						var elem = $(event.currentTarget);
+						var val=elem.val();
+						if(elem.val()=="")
+							val="ALL";
+						xhr = $.post('/set_session_project/'+val)
+							.done(
+									function(data){
+										location.reload();
+									}
+							);
+									
+					}
+							
+							
 				);
             });
         </script>
