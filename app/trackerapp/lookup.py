@@ -13,3 +13,8 @@ STATUSES = [('0','Open'),
 PRIORITIES = [('0','Low'),
               ('1','Medium'),
               ('2','High')]
+CATEGORIES = [('development','Development'),
+              ('concept','Concept'),
+              ('arts','Arts'),
+              ('defect','Defect'),
+              ('changerequest','Change request')]

@@ -16,10 +16,13 @@
 					<small class="text-muted">{{ statuses.get(tracker.status|string) }}</small>
 					<h6 class="my-0"><b>Priority</b></h6>
 					<small class="text-muted">{{ priorities.get(tracker.priority|string) }}</small>
-
-                </li>
-                <br>
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
+					<h6 class="my-0"><b>Categories</b></h6>
+					{% for category in tracker.categories %}
+					<small class="text-muted">{{ categories.get(category) }}</small>
+					<br>
+					{% endfor %}
+					</li>
+					<li class="list-group-item d-flex justify-content-between lh-condensed">
                     <form action="" method="POST" class=del-component>
                         <button class="btn btn-warning" name="action" value="edit">Edit</button>
                         <button class="btn btn-success" name="action" value="back">Back</button>

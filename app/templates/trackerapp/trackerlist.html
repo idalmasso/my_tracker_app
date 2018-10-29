@@ -18,7 +18,7 @@
             Tracker priority
         </th>
         <th>
-            Requires
+            Categories
         </th>
         {% if current_user.admin %}
         <th>
@@ -48,6 +48,9 @@
 			{{ priorities.get(tracker.priority|string) }}
         </td>
         <td class="tracker_requires">
+			{% for category in tracker.categories %}
+				{{ categories.get(category|string) }}{{"," if not loop.last }}
+			{% endfor %}
         </td>
         {% if current_user.admin %}
         <td>

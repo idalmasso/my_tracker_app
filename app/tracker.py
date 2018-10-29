@@ -22,6 +22,7 @@ class Tracker(object):
             self.priority = tracker.get('priority', 0)
             self.requires_id = int(tracker.get('requires_id', '-1'))
             self.project = tracker.get('project',None)
+            self.categories = tracker.get('categories',[])
 
     def remove_tracker(self):
         mongo.db.trackers.delete_one({'_id': ObjectId(self.id)})
@@ -33,7 +34,8 @@ class Tracker(object):
                                         'description':self.description,
                                         'status':self.status,
                                         'priority':self.priority,
-                                        'project':self.project
+                                        'project':self.project,
+                                        'categories':self.categories
                                         }})
     @staticmethod
     def add_tracker(title):

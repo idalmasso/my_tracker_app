@@ -25,7 +25,7 @@ def trackerlist():
     prev_url = url_for('trackerapp.trackerlist', page=trackers.prev) if trackers.has_prev else None
     next_url = url_for('trackerapp.trackerlist', page=trackers.next) if trackers.has_next else None
     return render_template('trackerapp/trackerlist.html', title='trackers',
-                           prev_url=prev_url, next_url=next_url, trackers=trackers.trackers, statuses=dict(STATUSES),priorities=dict(PRIORITIES) )
+                           prev_url=prev_url, next_url=next_url, trackers=trackers.trackers, statuses=dict(STATUSES),priorities=dict(PRIORITIES) , categories=dict(CATEGORIES))
 
 
 @bp.route('/tracker/<id>')
@@ -63,7 +63,7 @@ def tracker_info(id):
             return redirect(url_for('trackerapp.trackerlist'))
     else:
 
-        return render_template('trackerapp/tracker_info.html', tracker=tracker, title=Tracker.title, statuses=dict(STATUSES),priorities=dict(PRIORITIES))
+        return render_template('trackerapp/tracker_info.html', tracker=tracker, title=Tracker.title, statuses=dict(STATUSES),priorities=dict(PRIORITIES), categories=dict(CATEGORIES))
 
 
 @bp.route('/tracker_edit/<id>', methods=['GET', 'POST'])
@@ -85,6 +85,7 @@ def tracker_edit(id):
         tracker.priority = int(form.priority.data)
         tracker.status = int(form.status.data)
         tracker.project = form.project.data
+        tracker.categories = form.categories.data
         tracker.update_tracker_by_form()
         flash('Tracker  {} updated'.format(tracker.number))
         return redirect(url_for('trackerapp.trackerlist'))
@@ -107,6 +108,7 @@ def add_tracker():
         tracker.description = form.description.data
         tracker.priority = int(form.priority.data)
         tracker.project = form.project.data
+        tracker.categories = form.categories.data
         tracker.update_tracker_by_form()
         return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
     return render_template('trackerapp/add_tracker.html', form=form, title='Add tracker')
