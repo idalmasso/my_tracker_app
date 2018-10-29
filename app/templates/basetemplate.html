@@ -16,7 +16,16 @@
                     <li><a href="{{ url_for('trackerapp.index') }}">Home</a></li>
                         {% if current_user.is_authenticated %}
 					<li><a href="{{ url_for('projects.projectlist') }}">Projects</a></li>
-                    <li><a href="{{ url_for('trackerapp.trackerlist') }}">Trackers</a></li>
+
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Trackers <b class="caret"></b></a>
+					<!--Dropdown Items-->
+					<ul class="dropdown-menu">
+					<li><a href="{{ url_for('trackerapp.trackerlist', filter_tracker="open") }}">Open</a></li>
+					<li><a href="{{ url_for('trackerapp.trackerlist', filter_tracker="closed") }}">Closed</a></li>
+					<li><a href="{{ url_for('trackerapp.trackerlist', filter_tracker="all") }}">All</a></li>
+					</ul>
+					</li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -25,11 +34,14 @@
                         <li><a href="{{ url_for('authentication.login') }}">{{ 'Login' }}</a></li>
                     {% else %}
 						<li class>
-						  <select id="projects" class="form-control align-middle" style="margin-top:8px;">
+						<form class="navbar-form">
+						  <select id="projects" class="form-control align-middle">
 						  {% for prj in project_choices %}
 							<option value= "{{ prj[0] }}"{% if sessionproject==prj[0] %} selected{% endif %}>{{ prj[1] }} </option>
 						  {% endfor %}
-						  </select></li>
+						  </select>
+						  </form>
+						  </li>
                         {% if current_user.admin %}
                             <li><a href="{{ url_for('authentication.admin') }}">{{ 'Admin' }}</a></li>
                         {% endif %}
