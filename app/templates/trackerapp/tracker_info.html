@@ -21,6 +21,12 @@
 					<small class="text-muted">{{ categories.get(category) }}</small>
 					<br>
 					{% endfor %}
+					<h6 class="my-0"><b>Images</b></h6>
+					{% for filename in tracker.filenames %}
+					<small class="text-muted">
+					<a href="/uploads/{{ tracker.id }}/{{ filename }}">{{ filename }}</a></small>
+					<br>
+					{% endfor %}
 					</li>
 					<li class="list-group-item d-flex justify-content-between lh-condensed">
                     <form action="" method="POST" class=del-component>

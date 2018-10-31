@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, TextAreaField, SelectField,SelectMultipleField
+from wtforms import StringField, SubmitField, MultipleFileField, TextAreaField, SelectField,SelectMultipleField
 from wtforms.validators import  DataRequired
 from .lookup import *
 
@@ -10,6 +10,7 @@ class AddTrackerForm(FlaskForm):
     priority = SelectField('Priority', choices = Lookup(PRIORITIES))
     project = SelectField('Project', validators=[DataRequired()])
     categories = SelectMultipleField('Categories',choices=Lookup(CATEGORIES))
+    images = MultipleFileField('Images')
     submit = SubmitField('Submit')
 
 
@@ -20,4 +21,5 @@ class EditTrackerForm(FlaskForm):
     priority = SelectField('Priority', choices =Lookup(PRIORITIES))
     project = SelectField('Project', validators=[DataRequired()])
     categories = SelectMultipleField('Categories',choices=Lookup(CATEGORIES))
+    images = MultipleFileField('Images')
     submit = SubmitField('Submit')

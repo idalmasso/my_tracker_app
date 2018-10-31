@@ -1,5 +1,6 @@
 from app.trackerapp import bp
 from flask import url_for, request, render_template, send_from_directory, current_app, flash,redirect, jsonify, session
+from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user
 from app.trackerapp.forms import AddTrackerForm, EditTrackerForm
 from app.tracker import Tracker
@@ -90,6 +91,19 @@ def tracker_edit(id):
         tracker.status = int(form.status.data)
         tracker.project = form.project.data
         tracker.categories = form.categories.data
+        files = form.images.data
+
+        for f in files:
+            filename = secure_filename(f.filename)
+            if allowed_file(filename):
+                if not filename in tracker.filenames:
+                    tracker.filenames.append(filename)
+                if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id)):
+                    os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
+                f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
+                                   filename))
+            else:
+                flash('File {} skipped because not image'.format(filename))
         tracker.update_tracker_by_form()
         flash('Tracker  {} updated'.format(tracker.number))
         return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
@@ -113,6 +127,18 @@ def add_tracker():
         tracker.priority = int(form.priority.data)
         tracker.project = form.project.data
         tracker.categories = form.categories.data
+        f = form.images.data
+        
+        for f in files:
+            filename = secure_filename(f.filename)
+            if allowed_file(filename):
+                tracker.filenames.append(filename)
+                if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id)):
+                    os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
+                f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
+                                   filename))
+            else:
+                flash('File {} skipped because not image'.format(filename))
         tracker.update_tracker_by_form()
         return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
     return render_template('trackerapp/add_tracker.html', form=form, title='Add tracker')
@@ -124,3 +150,12 @@ def delete_tracker(id):
     if current_user.admin:
         Tracker.get_tracker(id).remove_tracker()
     return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+@bp.route('/uploads/<tracker_id>/<filename>')
+def uploaded_file(tracker_id,filename):
+    return send_from_directory(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker_id),
+                               filename)

@@ -16,7 +16,7 @@ class Tracker(object):
             self.number = tracker.get('number', 0)
             self.title = tracker.get('title', '')
             self.description = tracker.get('description', '')
-            self.file_paths = tracker.get('file_paths', None)
+            self.filenames = tracker.get('filenames', [])
             self.id = str(tracker.get('_id', ''))
             self.status = tracker.get('status', 0)
             self.priority = tracker.get('priority', 0)
@@ -35,7 +35,8 @@ class Tracker(object):
                                         'status':self.status,
                                         'priority':self.priority,
                                         'project':self.project,
-                                        'categories':self.categories
+                                        'categories':self.categories,
+                                        'filenames':self.filenames
                                         }})
     @staticmethod
     def add_tracker(title):
