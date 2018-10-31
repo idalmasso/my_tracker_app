@@ -31,7 +31,7 @@
     <tr>
 		<td>
         <div class="tracker_id">
-                <a href="{{ url_for('trackerapp.tracker_info',id=tracker.id) }}">{{ '%04d' % tracker.number }}</a>
+                <a href="{{ url_for('trackerapp.tracker_info',id=tracker.id) }}">{{ tracker.prefix }}-{{ '%04d' % tracker.number }}</a>
                 <span hidden="True">{{ tracker.id }}</span>
             </div>
         </td>

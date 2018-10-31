@@ -6,24 +6,27 @@ class TrkProject(object):
     description = ''
     def __init__(self, prj=None):
         if prj is not None:
-           self.name = prj.get('name','')
-           self.description = prj.get('description','')
-           self.id = str(prj.get('_id',''))
+            self.prefix = prj.get('prefix','')
+            self.name = prj.get('name','')
+            self.description = prj.get('description','')
+            self.id = str(prj.get('_id',''))
 
     def update_project(self):
         mongo.db.projects.update_one({'_id':ObjectId(self.id)},
                                      {'$set':{
                                          'name':self.name,
+                                         'prefix':self.prefix,
                                          'description':self.description
                                          }})
 
     @staticmethod
-    def create_project(name,description):
+    def create_project(name,description,prefix):
         prj = mongo.db.projects.find_one({'name':name})
         if prj is not None:
             return TrkProject(prj)
         prj_id = mongo.db.projects.insert({'name': name,
-                                           'description':description})
+                                           'description':description,
+                                           'prefix':prefix})
         project = TrkProject.get_project(str(prj_id))
         return project
 

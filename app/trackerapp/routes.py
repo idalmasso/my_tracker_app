@@ -90,20 +90,22 @@ def tracker_edit(id):
         tracker.priority = int(form.priority.data)
         tracker.status = int(form.status.data)
         tracker.project = form.project.data
+        tracker.prefix=TrkProject.get_project(tracker.project).prefix
         tracker.categories = form.categories.data
         files = form.images.data
 
         for f in files:
-            filename = secure_filename(f.filename)
-            if allowed_file(filename):
-                if not filename in tracker.filenames:
-                    tracker.filenames.append(filename)
-                if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id)):
-                    os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
-                f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
-                                   filename))
-            else:
-                flash('File {} skipped because not image'.format(filename))
+            if not f is None and not f=='':
+                filename = secure_filename(f.filename)
+                if allowed_file(filename):
+                    if not filename in tracker.filenames:
+                        tracker.filenames.append(filename)
+                    if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id)):
+                        os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
+                    f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
+                                       filename))
+                else:
+                    flash('File {} skipped because not image'.format(filename))
         tracker.update_tracker_by_form()
         flash('Tracker  {} updated'.format(tracker.number))
         return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
@@ -122,23 +124,25 @@ def add_tracker():
         flash('No Projects exist!')
         return redirect(url_for('projects.projectlist',filter_tracker='open'))
     if form.validate_on_submit():
-        tracker=Tracker.add_tracker(form.title.data)
+        tracker=Tracker.add_tracker(form.title.data,form.project.data)
         tracker.description = form.description.data
         tracker.priority = int(form.priority.data)
         tracker.project = form.project.data
+        tracker.prefix=TrkProject.get_project(tracker.project).prefix
         tracker.categories = form.categories.data
-        f = form.images.data
+        files = form.images.data
         
         for f in files:
-            filename = secure_filename(f.filename)
-            if allowed_file(filename):
-                tracker.filenames.append(filename)
-                if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id)):
-                    os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
-                f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
-                                   filename))
-            else:
-                flash('File {} skipped because not image'.format(filename))
+            if not f is None and not f=='':
+                filename = secure_filename(f.filename)
+                if allowed_file(filename):
+                    tracker.filenames.append(filename)
+                    if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.num)):
+                        os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
+                    f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
+                                       filename))
+                else:
+                    flash('File {} skipped because not image'.format(filename))
         tracker.update_tracker_by_form()
         return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
     return render_template('trackerapp/add_tracker.html', form=form, title='Add tracker')

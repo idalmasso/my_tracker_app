@@ -13,6 +13,7 @@ class Tracker(object):
 
     def __init__(self, tracker=None):
         if tracker is not None:
+            self.prefix = tracker.get('prefix','')
             self.number = tracker.get('number', 0)
             self.title = tracker.get('title', '')
             self.description = tracker.get('description', '')
@@ -30,6 +31,7 @@ class Tracker(object):
     def update_tracker_by_form(self):
         mongo.db.trackers.update_one({'_id': ObjectId(self.id)},{
                                     '$set':{
+                                        'prefix':self.prefix,
                                         'title':self.title,
                                         'description':self.description,
                                         'status':self.status,
@@ -39,11 +41,11 @@ class Tracker(object):
                                         'filenames':self.filenames
                                         }})
     @staticmethod
-    def add_tracker(title):
+    def add_tracker(title, project):
         trk = mongo.db.trackers.find_one({'title': title})
         if trk is not None:
             return Tracker(trk)
-        max_val_trk=mongo.db.trackers.find_one({},{'number':1}, sort=[('number',-1)])
+        max_val_trk=mongo.db.trackers.find_one({'project':project},{'number':1}, sort=[('number',-1)])
         if max_val_trk is None:
             max_val =0
         else:
@@ -64,7 +66,7 @@ class Tracker(object):
         cont = mongo.db.trackers.count(filtering)
         list_tracker.has_next = (cont > tracker_per_page * page_number)
         skips = tracker_per_page * (page_number - 1)
-        cursor = mongo.db.trackers.find(filtering).skip(skips).limit(tracker_per_page)
+        cursor = mongo.db.trackers.find(filtering,sort=ordering).skip(skips).limit(tracker_per_page)
         list_tracker.trackers = [Tracker(tracker) for tracker in cursor]
         return list_tracker
 

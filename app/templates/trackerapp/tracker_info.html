@@ -3,7 +3,7 @@
 {% block appcontent %}
 
 <div class="container">
-    <h1>Tracker {{ '%04d' % tracker.number }}</h1>
+    <h1>Tracker {{ tracker.prefix }}-{{ '%04d' % tracker.number }}</h1>
     <div class="row">
         <div class="col-lg-12 order-md-1">
             <ul class="list-group mb-1">

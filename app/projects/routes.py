@@ -54,6 +54,7 @@ def project_edit(id):
     if form.validate_on_submit():
         project.name = form.name.data
         project.description = form.description.data
+        project.prefix = form.prefix.data
         project.update_project()
         flash('Project  {} updated'.format(project.name))
         return redirect(url_for('projects.projectlist'))
@@ -66,7 +67,7 @@ def project_edit(id):
 def add_project():
     form = AddEditProjectForm()
     if form.validate_on_submit():
-        project=TrkProject.create_project(form.name.data, form.description.data)
+        project=TrkProject.create_project(form.name.data, form.description.data,form.prefix.data)
         return redirect(url_for('projects.project_info', id= project.id))
     return render_template('projects/add_project.html', form=form, title='Add project')
 
