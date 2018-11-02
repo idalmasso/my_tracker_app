@@ -5,13 +5,25 @@ from flask_login import login_required, current_user
 from app.trackerapp.forms import AddTrackerForm, EditTrackerForm
 from app.tracker import Tracker
 from app.projectmodel import TrkProject
+from app.trackerchangesmodel import TrkChanges
 import os
 from .lookup import *
 
 
 @bp.route('/')
+@login_required
 def index():
-    return render_template('index.html', title='Home')
+    filt = {}
+    if 'sessionproject' in session:
+        if session['sessionproject']!='ALL':            
+            filt = {'project':session['sessionproject']}
+    page = request.args.get('page', 1, type=int)
+    changes = TrkChanges.get_list_changes(page, int(current_app.config['TRACKER_PER_PAGE']), filt)
+    prev_url = url_for('trackerapp.index', page=changes.prev) if changes.has_prev else None
+    next_url = url_for('trackerapp.index', page=changes.next) if changes.has_next else None
+    return render_template('trackerapp/listchanges.html', title='Last changes',
+                           prev_url=prev_url, next_url=next_url, changes=changes.changes)
+
 
 
 @bp.route('/trackerlist/<filter_tracker>')
@@ -29,7 +41,7 @@ def trackerlist(filter_tracker):
     trackers = Tracker.get_list_trackers(page, int(current_app.config['TRACKER_PER_PAGE']),filtering=filt)
     prev_url = url_for('trackerapp.trackerlist',filter_tracker=filter_tracker, page=trackers.prev) if trackers.has_prev else None
     next_url = url_for('trackerapp.trackerlist',filter_tracker=filter_tracker, page=trackers.next) if trackers.has_next else None
-    return render_template('trackerapp/trackerlist.html', title='trackers',
+    return render_template('trackerapp/trackerlist.html', title='Trackers',
                            prev_url=prev_url, next_url=next_url, trackers=trackers.trackers, statuses=dict(STATUSES),priorities=dict(PRIORITIES) , categories=dict(CATEGORIES))
 
 
@@ -93,7 +105,7 @@ def tracker_edit(id):
         tracker.prefix=TrkProject.get_project(tracker.project).prefix
         tracker.categories = form.categories.data
         files = form.images.data
-
+        action = 'EDITED'
         for f in files:
             if not f is None and not f=='':
                 filename = secure_filename(f.filename)
@@ -104,10 +116,12 @@ def tracker_edit(id):
                         os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
                     f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
                                        filename))
+                    action = 'ADDED IMAGES'
                 else:
                     flash('File {} skipped because not image'.format(filename))
         tracker.update_tracker_by_form()
         flash('Tracker  {} updated'.format(tracker.number))
+        TrkChanges.create_change(current_user.username,tracker,tracker.project,action)
         return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
     else:
         return render_template('trackerapp/tracker_edit.html', form=form,tracker=tracker, title=Tracker.title)
@@ -144,6 +158,7 @@ def add_tracker():
                 else:
                     flash('File {} skipped because not image'.format(filename))
         tracker.update_tracker_by_form()
+        TrkChanges.create_change(current_user.username,tracker,tracker.project,'CREATED')
         return redirect(url_for('trackerapp.tracker_info', id= tracker.id))
     return render_template('trackerapp/add_tracker.html', form=form, title='Add tracker')
 
@@ -153,6 +168,7 @@ def add_tracker():
 def delete_tracker(id):
     if current_user.admin:
         Tracker.get_tracker(id).remove_tracker()
+        TrkChanges.create_change(current_user.username,tracker,tracker.project,'DELETED')
     return redirect(url_for('trackerapp.trackerlist',filter_tracker='open'))
 
 def allowed_file(filename):
