@@ -137,7 +137,7 @@ def add_tracker():
                 filename = secure_filename(f.filename)
                 if allowed_file(filename):
                     tracker.filenames.append(filename)
-                    if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.num)):
+                    if not os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id)):
                         os.mkdir(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id))
                     f.save(os.path.join(current_app.config['UPLOAD_FOLDER'],tracker.id,
                                        filename))
