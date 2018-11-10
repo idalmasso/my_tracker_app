@@ -4,7 +4,6 @@ from flask_pymongo import PyMongo
 from flask_bootstrap import Bootstrap
 from pymongo import ASCENDING
 from config import Config
-from threading import Thread
 import logging
 from logging.handlers import RotatingFileHandler
 import os

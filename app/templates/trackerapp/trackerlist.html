@@ -20,6 +20,9 @@
         <th>
             Categories
         </th>
+           <th>
+            Assigned to
+        </th>
         {% if current_user.admin %}
         <th>
             Delete
@@ -47,10 +50,13 @@
         <td class="tracker_priority">
 			{{ priorities.get(tracker.priority|string) }}
         </td>
-        <td class="tracker_requires">
+        <td class="tracker_categories">
 			{% for category in tracker.categories %}
 				{{ categories.get(category|string) }}{{"," if not loop.last }}
 			{% endfor %}
+        </td>
+        		<td class="tracker_assignedTo">
+			{{ tracker.user_assigned }}
         </td>
         {% if current_user.admin %}
         <td>

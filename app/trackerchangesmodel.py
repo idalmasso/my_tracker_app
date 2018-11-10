@@ -2,6 +2,7 @@ from app import mongo
 from bson.objectid import ObjectId
 import datetime
 
+
 class TrkChanges(object):
     username = ''
     tracker_id = ''
@@ -9,30 +10,30 @@ class TrkChanges(object):
     datetime = ''
     project = ''
     action = ''
+
     def __init__(self, change=None):
         if change is not None:
-            self.username = change.get('username','')
-            self.tracker_id = change.get('tracker_id','')
-            self.tracker_identifier = change.get('tracker_identifier','')
-            self.datetime = change.get('datetime','')
-            self.project = change.get('project','')
-            self.id = str(change.get('_id',''))
-            self.action = change.get('action','')
-   
+            self.username = change.get('username', '')
+            self.tracker_id = change.get('tracker_id', '')
+            self.tracker_identifier = change.get('tracker_identifier', '')
+            self.datetime = change.get('datetime', '')
+            self.project = change.get('project', '')
+            self.id = str(change.get('_id', ''))
+            self.action = change.get('action', '')
 
     @staticmethod
     def create_change(username,tracker,project,action):
         chg_id = mongo.db.changes.insert({'username': username,
-                                           'tracker_id':str(tracker.id),
-                                          'tracker_identifier':(tracker.prefix+'-'+"%04d" % tracker.number),
-                                           'project':project,
+                                          'tracker_id': str(tracker.id),
+                                          'tracker_identifier': (tracker.prefix+'-'+"%04d" % tracker.number),
+                                          'project': project,
                                           'datetime': datetime.datetime.utcnow(),
-                                          'action':action})
+                                          'action': action})
         chg = TrkChanges.get_change(str(chg_id))
         return project
 
     @staticmethod
-    def get_list_changes(page_number, changes_per_page, filt):
+    def get_list_changes(page_number, changes_per_page, filtering):
         class Object(object):
             pass
 
@@ -40,10 +41,10 @@ class TrkChanges(object):
         list_changes.has_prev = (page_number > 1)
         list_changes.prev = page_number - 1
         list_changes.next = page_number + 1
-        cont = mongo.db.changes.count(filt)
+        cont = mongo.db.changes.count(filtering)
         list_changes.has_next = (cont > changes_per_page * page_number)
         skips = changes_per_page * (page_number - 1)
-        cursor = mongo.db.changes.find(filt).sort('datetime', -1).skip(skips).limit(changes_per_page)
+        cursor = mongo.db.changes.find(filtering).sort('datetime', -1).skip(skips).limit(changes_per_page)
         list_changes.changes = [TrkChanges(change) for change in cursor]
         return list_changes
 

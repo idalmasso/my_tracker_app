@@ -11,7 +11,6 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'secret-key-that_cannot-be-guessedWAAAA'
     TRACKER_PER_PAGE = os.environ.get('TRACKER_PER_PAGE') or 20
     PROJECTS_PER_PAGE = os.environ.get('TRACKER_PER_PAGE') or 20
-    BOOTSTRAP_USE_MINIFIED = False
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or r'C:\Temp\aaa'
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
   
